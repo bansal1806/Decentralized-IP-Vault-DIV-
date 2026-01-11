@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, ShoppingBag, ShieldCheck, Menu, Receipt } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, ShieldCheck, Menu, Receipt, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
@@ -52,6 +52,11 @@ export function Navbar() {
                             System Operational
                         </span>
                     </div>
+                    <Button variant="ghost" size="icon" asChild>
+                        <Link href="/profile">
+                            <User className="w-5 h-5" />
+                        </Link>
+                    </Button>
                     <Button variant="default" size="sm" asChild>
                         <Link href="/dashboard">Connect Wallet</Link>
                     </Button>

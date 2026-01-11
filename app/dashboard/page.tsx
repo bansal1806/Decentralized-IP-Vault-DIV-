@@ -2,6 +2,7 @@
 
 import { MOCK_USER_HOLDINGS, MOCK_ASSETS } from "@/lib/mock-db";
 import { PortfolioChart } from "@/components/features/dashboard/PortfolioChart";
+import { PortfolioAnalytics } from "@/components/features/dashboard/PortfolioAnalytics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -76,6 +77,9 @@ export default function DashboardPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Enhanced Analytics Section */}
+            <PortfolioAnalytics />
 
             <Card>
                 <CardHeader>

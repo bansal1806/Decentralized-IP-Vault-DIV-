@@ -57,7 +57,7 @@ export function OpportunityFinancials({ asset }: OpportunityFinancialsProps) {
               />
               <Tooltip
                 contentStyle={{ backgroundColor: "#1e293b", border: "none" }}
-                formatter={(value: number) => `$${value.toLocaleString()}`}
+                formatter={(value: number | undefined) => value ? `$${value.toLocaleString()}` : "$0"}
               />
               <Area
                 type="monotone"
@@ -105,7 +105,7 @@ export function OpportunityFinancials({ asset }: OpportunityFinancialsProps) {
               <YAxis stroke="#888888" fontSize={12} tickFormatter={(value) => `${value}%`} />
               <Tooltip
                 contentStyle={{ backgroundColor: "#1e293b", border: "none" }}
-                formatter={(value: number) => `${value}%`}
+                formatter={(value: number | undefined) => value ? `${value}%` : "0%"}
               />
               <Bar dataKey="value" radius={[8, 8, 0, 0]} fill="#3b82f6" />
             </BarChart>
