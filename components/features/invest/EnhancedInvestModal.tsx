@@ -11,6 +11,7 @@ import { CheckCircle2, Loader2, FileText, Lock, CreditCard, Wallet, ArrowRight }
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { investInAsset } from "@/app/actions/invest";
 
 interface EnhancedInvestModalProps {
     asset: CreativeAsset;
@@ -43,22 +44,39 @@ export function EnhancedInvestModal({ asset }: EnhancedInvestModalProps) {
         }, 500);
     };
 
-    const handleLegalAccept = () => {
+    const handleLegalAccept = async () => {
         setStep('processing');
         toast({
             variant: "default",
             title: "Processing Investment",
             description: "Your investment is being processed...",
         });
-        
-        setTimeout(() => {
-            setStep('success');
+
+        try {
+            const result = await investInAsset(asset.id, amount);
+            if (result.success) {
+                setStep('success');
+                toast({
+                    variant: "success",
+                    title: "Investment Successful!",
+                    description: result.message || `You've invested $${amount} in ${asset.title}`,
+                });
+            } else {
+                toast({
+                    variant: "error",
+                    title: "Investment Failed",
+                    description: result.message || "Something went wrong.",
+                });
+                setStep('amount');
+            }
+        } catch (error) {
             toast({
-                variant: "success",
-                title: "Investment Successful!",
-                description: `You've invested $${amount} in ${asset.title}`,
+                variant: "error",
+                title: "Error",
+                description: "Failed to connect to the Investment Vault.",
             });
-        }, 3000);
+            setStep('amount');
+        }
     };
 
     return (
@@ -134,11 +152,10 @@ export function EnhancedInvestModal({ asset }: EnhancedInvestModalProps) {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={() => handlePaymentSelect('card')}
-                                    className={`p-6 rounded-xl border-2 transition-all text-left ${
-                                        paymentMethod === 'card'
-                                            ? 'border-primary bg-primary/10'
-                                            : 'border-border hover:border-primary/50'
-                                    }`}
+                                    className={`p-6 rounded-xl border-2 transition-all text-left ${paymentMethod === 'card'
+                                        ? 'border-primary bg-primary/10'
+                                        : 'border-border hover:border-primary/50'
+                                        }`}
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="p-3 rounded-lg bg-primary/10 text-primary">
@@ -160,11 +177,10 @@ export function EnhancedInvestModal({ asset }: EnhancedInvestModalProps) {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={() => handlePaymentSelect('wallet')}
-                                    className={`p-6 rounded-xl border-2 transition-all text-left ${
-                                        paymentMethod === 'wallet'
-                                            ? 'border-primary bg-primary/10'
-                                            : 'border-border hover:border-primary/50'
-                                    }`}
+                                    className={`p-6 rounded-xl border-2 transition-all text-left ${paymentMethod === 'wallet'
+                                        ? 'border-primary bg-primary/10'
+                                        : 'border-border hover:border-primary/50'
+                                        }`}
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="p-3 rounded-lg bg-primary/10 text-primary">

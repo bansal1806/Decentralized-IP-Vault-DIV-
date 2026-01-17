@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ToastProvider } from "@/components/ui/toast";
+import { Web3Provider } from "@/components/providers/Web3Provider";
 
 export const metadata: Metadata = {
   title: "DIV Protocol | Decentralized IP Vault",
@@ -31,13 +32,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background font-sans text-foreground`}
       >
-        <ToastProvider>
-          <div className="relative flex min-h-screen flex-col">
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-        </ToastProvider>
+        <Web3Provider>
+          <ToastProvider>
+            <div className="relative flex min-h-screen flex-col">
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </ToastProvider>
+        </Web3Provider>
       </body>
     </html>
   );

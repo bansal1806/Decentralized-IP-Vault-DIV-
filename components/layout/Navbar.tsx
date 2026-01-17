@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, ShoppingBag, ShieldCheck, Menu, Receipt, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { WalletConnect } from "@/components/features/auth/WalletConnect";
 
 export function Navbar() {
     const pathname = usePathname();
@@ -13,6 +14,7 @@ export function Navbar() {
         { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
         { name: "Portfolio", href: "/dashboard", icon: LayoutDashboard },
         { name: "Transactions", href: "/transactions", icon: Receipt },
+        { name: "Mint IP", href: "/register", icon: ShieldCheck },
     ];
 
     return (
@@ -57,9 +59,7 @@ export function Navbar() {
                             <User className="w-5 h-5" />
                         </Link>
                     </Button>
-                    <Button variant="default" size="sm" asChild>
-                        <Link href="/dashboard">Connect Wallet</Link>
-                    </Button>
+                    <WalletConnect />
                 </div>
             </div>
         </nav>

@@ -8,11 +8,42 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, TrendingUp, Wallet } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAccount } from "wagmi";
+import { useState, useEffect } from "react";
+import { fetchUserHoldings } from "@/app/actions/user";
 
 export default function DashboardPage() {
-    const totalValue = MOCK_USER_HOLDINGS.reduce((acc, curr) => acc + curr.currentValue, 0);
-    const totalInvested = MOCK_USER_HOLDINGS.reduce((acc, curr) => acc + curr.investedAmount, 0);
+    const { address, isConnected } = useAccount();
+    const [holdings, setHoldings] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        async function load() {
+            if (isConnected && address) {
+                setIsLoading(true);
+                // Simulate fetch
+                const data = await fetchUserHoldings(address);
+                setHoldings(data);
+                setIsLoading(false);
+            } else {
+                setHoldings([]);
+            }
+        }
+        load();
+    }, [isConnected, address]);
+
+    const totalValue = holdings.reduce((acc, curr) => acc + curr.currentValue, 0);
+    const totalInvested = holdings.reduce((acc, curr) => acc + curr.investedAmount, 0);
     const yieldToDate = totalValue - totalInvested;
+
+    if (!isConnected) {
+        return (
+            <div className="container py-20 max-w-screen-2xl mx-auto text-center space-y-4">
+                <h2 className="text-2xl font-bold">Please Connect Your Wallet</h2>
+                <p className="text-muted-foreground">You need to connect a wallet to view your portfolio.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="container py-8 max-w-screen-2xl mx-auto space-y-8">
@@ -20,7 +51,7 @@ export default function DashboardPage() {
                 <h2 className="text-3xl font-bold tracking-tight">Portfolio Overview</h2>
                 <div className="flex items-center space-x-2">
                     <Badge variant="outline" className="text-green-500 border-green-500/50">
-                        Connected: 0x71C...9A2
+                        Connected: {address?.slice(0, 6)}...{address?.slice(-4)}
                     </Badge>
                 </div>
             </div>
@@ -28,8 +59,8 @@ export default function DashboardPage() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {[
                     { icon: DollarSign, title: "Total Balance", value: `$${totalValue.toFixed(2)}`, change: "+20.1% from last month", color: "" },
-                    { icon: TrendingUp, title: "Total Yield", value: `+$${yieldToDate.toFixed(2)}`, change: `Across ${MOCK_USER_HOLDINGS.length} assets`, color: "text-green-500" },
-                    { icon: Wallet, title: "Active Assets", value: MOCK_USER_HOLDINGS.length.toString(), change: "2 Funding, 1 Active", color: "" },
+                    { icon: TrendingUp, title: "Total Yield", value: `+$${yieldToDate.toFixed(2)}`, change: `Across ${holdings.length} assets`, color: "text-green-500" },
+                    { icon: Wallet, title: "Active Assets", value: holdings.length.toString(), change: "2 Funding, 1 Active", color: "" },
                 ].map((stat, index) => {
                     const Icon = stat.icon;
                     return (
@@ -97,7 +128,7 @@ export default function DashboardPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {MOCK_USER_HOLDINGS.map((holding) => {
+                            {holdings.map((holding) => {
                                 const asset = MOCK_ASSETS.find(a => a.id === holding.assetId);
                                 if (!asset) return null;
                                 return (
